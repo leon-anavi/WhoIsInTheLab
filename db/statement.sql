@@ -9,3 +9,4 @@ WHERE online_MAC NOT IN (SELECT blacklist_MAC FROM who_blacklist)
 GROUP BY user
 ORDER BY user_name1 ASC
 
+
