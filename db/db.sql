@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS `who_online` (
 
 CREATE TABLE IF NOT EXISTS `who_users` (
   `user_id` int(6) NOT NULL auto_increment,
-  `user_name1` text collate cp1251_bulgarian_ci NOT NULL,
+  `user_name1` varchar(40) collate cp1251_bulgarian_ci NOT NULL,
   `user_name2` varchar(40) collate cp1251_bulgarian_ci NOT NULL,
   `user_twitter` varchar(100) collate cp1251_bulgarian_ci NOT NULL,
   `user_facebook` varchar(100) collate cp1251_bulgarian_ci NOT NULL,
