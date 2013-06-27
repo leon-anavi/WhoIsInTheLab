@@ -9,16 +9,21 @@
 * ============================================================================
 */
 
+require_once "DatabaseManager.php";
+
 class NetworkScanner
 {
+	private $m_dbCtrl;
+
 	function __construct()
 	{
+		$this->m_dbCtrl = new DatabaseManager();
 	}
 	//------------------------------------------------------------------------------
 	
 	function __destruct()
 	{
-	
+		//Nothing to do
 	}
 	//------------------------------------------------------------------------------
 	
@@ -31,7 +36,7 @@ class NetworkScanner
 	{
 		$sNetInfo = $this->scanNetwork();
 		$devices = $this->parse($sNetInfo);
-		print_r($devices);
+		$this->m_dbCtrl->saveOnlineDevices($devices);
 	}
 	//------------------------------------------------------------------------------
 	

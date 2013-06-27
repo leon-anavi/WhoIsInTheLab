@@ -20,7 +20,7 @@ class DatabaseManager
 
 	function __construct()
 	{
-		$this->m_db = new mysqli('localhost', 'root', 'leon123', 'whoIsInTheLab');
+		$this->m_db = new mysqli('', '', '', 'whoIsInTheLab');
 		if ($this->m_db->connect_error) 
 		{
 			die('Connect Error: ' . $this->m_db->connect_error);

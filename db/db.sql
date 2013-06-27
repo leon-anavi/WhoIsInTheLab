@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS `who_devices` (
   `device_id` int(10) NOT NULL auto_increment,
   `device_MAC` varchar(17) collate cp1251_bulgarian_ci NOT NULL,
   `device_uid` int(6) NOT NULL,
+  `device_comment` varchar(100) COLLATE cp1251_bulgarian_ci NOT NULL,
   PRIMARY KEY  (`device_id`),
   UNIQUE KEY `device_MAC` (`device_MAC`)
 ) ENGINE=InnoDB DEFAULT CHARSET=cp1251 COLLATE=cp1251_bulgarian_ci AUTO_INCREMENT=1 ;
