@@ -13,6 +13,10 @@ require_once "DatabaseManager.php";
 
 class NetworkObserver
 {
+
+	private static $LINK_TWITTER = 'https://twitter.com/';
+	private static $LINK_FACEBOOK = 'https://www.facebook.com/';
+
 	private $m_dbCtrl;
 
 	function __construct()
@@ -97,7 +101,19 @@ class NetworkObserver
 	private function listPlainText($nDevicesCount, $users)
 	{
 		echo "Online: {$nDevicesCount} \n";
-		print_r($users);
+		foreach($users as $user)
+		{
+			echo "Name: {$user['user_name1']} {$user['user_name2']} ";
+			if (false == empty($user['user_twitter']))
+			{
+				echo "Twitter: ".self::$LINK_TWITTER."{$user['user_twitter']} ";
+			} 
+			if (false == empty($user['user_facebook']))
+			{
+				echo "Facebook: ".self::$LINK_FACEBOOK."{$user['user_facebook']}";
+			}
+			echo "\n";
+		}
 	}
 	//------------------------------------------------------------------------------
 		
