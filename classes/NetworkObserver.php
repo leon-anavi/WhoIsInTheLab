@@ -10,6 +10,7 @@
 */
 
 require_once "DatabaseManager.php";
+require_once "User.php";
 
 class NetworkObserver
 {
@@ -38,6 +39,9 @@ class NetworkObserver
 	 */
 	public function listOnlineUsers($sType)
 	{
+		//make sure that the argument will be process correctly
+		$sType = strtoupper($sType);
+		
 		$devices = $this->m_dbCtrl->listOnlineDevices();
 		$nDevicesCount = count($devices);
 		$users = $this->extractUsers($devices);
@@ -56,6 +60,7 @@ class NetworkObserver
 				echo $this->listXML($nDevicesCount, $users);
 			break;
 			
+			case 'TXT':
 			default:
 				//plain text
 				echo $this->listPlainText($nDevicesCount, $users);
@@ -69,12 +74,15 @@ class NetworkObserver
 		$users = array();
 		foreach($devices as $device)
 		{
-			if ( (true == isset($device['user_name1'])) ||
+			if ( (false == empty($device['user_name1'])) ||
 				 (false == empty($device['user_name2'])) ||
-				 (false == empty($device['twitter'])) ||
-				 (false == empty($device['facebook'])) )
+				 (false == empty($device['user_twitter'])) ||
+				 (false == empty($device['user_facebook'])) ||
+				 (false == empty($device['user_tel'])) )
 			{
-				$users[] = $device;
+				$users[] = new User($device['user_name1'], $device['user_name2'], 
+									$device['user_facebook'], $device['user_twitter'],
+									$device['user_tel']);
 			}
 		}
 		return $users;
@@ -83,37 +91,142 @@ class NetworkObserver
 	
 	private function listJSON($nDevicesCount, $users)
 	{
-	
+		$output = array();
+		//error status
+		$output['error'] = array('ErrCode' => 0, 'ErrMsg' => '');
+		//prepare users
+		$jsonUsers = array();
+		foreach($users as $user)
+		{
+			$jsonUser = array('name1' => $user->name1, 
+								'name2' => $user->name2,
+								'twitter' => $user->twitterLink,
+								'facebook' => $user->facebookLink,
+								'tel' => $user->tel);
+			array_push($jsonUsers, $jsonUser);
+		}
+		//append the total count nad the users to the data
+		$output['data'] = array('count' => $nDevicesCount, 'users' => $jsonUsers );
+		return json_encode($output);
 	}
 	//------------------------------------------------------------------------------
 	
 	private function listHTML($nDevicesCount, $users)
 	{
-	
+		$sOutput = "<h2>Online: {$nDevicesCount}</h2>\n";
+		$sOutput .= "<ul>\n";
+		foreach($users as $user)
+		{
+			$sOutput .= "<li>";
+			$sOutput .= $user->name;
+			$sTwitter = $user->twitter;
+			if (false == empty($sTwitter))
+			{
+				$sOutput .= " twitter: <a href =\"{$user->twitterLink}\">{$sTwitter}</a>";
+			}
+			$sFb = $user->facebook;
+			if (false == empty($sFb))
+			{
+				$sOutput .= " facebook: <a href=\"{$user->facebookLink}\">{$sFb}</a>";
+			}
+			$sTel = $user->tel;
+			if (false == empty($sTel))
+			{
+				$sOutput .= " tel: <a href=\"callto:{$sTel}\">{$sTel}</a>";
+			}
+			echo "</li>\n";
+		}
+		$sOutput .= "</ul>\n";
+		return $sOutput;
 	}
 	//------------------------------------------------------------------------------
 	
 	private function listXML($nDevicesCount, $users)
 	{
+		$sOutPut = '';
+		try
+		{
+			$xml = new DOMDocument("1.0");
+			//root
+			$root = $xml->createElement('who');
+			$xml->appendChild($root);
+			//error
+			$error = $xml->createElement('error');
+			$root->appendChild($error);
+			//error code
+			$ErrCode = $xml->createElement('ErrCode');
+			$ErrCodeText = $xml->createTextNode('0');
+			$ErrCode->appendChild($ErrCodeText);
+			$error->appendChild($ErrCode);
+			//error message
+			$ErrMsg = $xml->createElement('ErrMsg');
+			$ErrMsgText = $xml->createTextNode('');
+			$ErrMsg->appendChild($ErrMsgText);
+			$error->appendChild($ErrMsg);
+			//data
+			$data = $xml->createElement('data');
+			$root->appendChild($data);
+			//total number of devices
+			$count = $xml->createElement('count');
+			$countText = $xml->createTextNode($nDevicesCount);
+			$count->appendChild($countText);
+			$data->appendChild($count);
+			//users
+			$xmlUsers = $xml->createElement('users');
+			$data->appendChild($xmlUsers);
+			//user
+			foreach($users as $user)
+			{
+				$xmlUser = $xml->createElement('user');
+				//name1
+				$xmlName1 = $xml->createAttribute('name1');
+				$xmlName1->value = $user->name1;
+				$xmlUser->appendChild($xmlName1);
+				//name2
+				$xmlName2 = $xml->createAttribute('name2');
+				$xmlName2->value = $user->name2;
+				$xmlUser->appendChild($xmlName2);
+				
+				$xmlUsers->appendChild($xmlUser);
+			}
+			
+			$xml->preserveWhiteSpace = false;
+			$xml->formatOutput = true;
+			$sOutPut = $xml->saveXML();
+		}
+		catch (Exception $ex)
+		{
+			//Nothing to do
+			print_r($ex);
+		}
+		return $sOutPut;
 	}
 	//------------------------------------------------------------------------------
 	
 	private function listPlainText($nDevicesCount, $users)
 	{
-		echo "Online: {$nDevicesCount} \n";
+		$sOutput = "Online: {$nDevicesCount} \n";
 		foreach($users as $user)
 		{
-			echo "Name: {$user['user_name1']} {$user['user_name2']} ";
-			if (false == empty($user['user_twitter']))
+			$sOutput .= "Name: {$user->name} ";
+			$sTwitter = $user->twitterLink;
+			if (false == empty($sTwitter))
 			{
-				echo "Twitter: ".self::$LINK_TWITTER."{$user['user_twitter']} ";
-			} 
-			if (false == empty($user['user_facebook']))
-			{
-				echo "Facebook: ".self::$LINK_FACEBOOK."{$user['user_facebook']}";
+				$sOutput .= "Twitter: {$sTwitter} ";
 			}
-			echo "\n";
+			$sFb = $user->facebookLink;
+			if (false == empty($sFb))
+			{
+				$sOutput .= "Facebook: {$sFb}";
+			}
+			$sTel = $user->tel;
+			if (false == empty($sTel))
+			{
+				$sOutput .= "tel: {$sTel}";
+			}
+			$sOutput .= "\n";
 		}
+		return $sOutput;
 	}
 	//------------------------------------------------------------------------------
 		

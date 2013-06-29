@@ -1,9 +1,9 @@
 <?
 /*
 * ============================================================================
-*  Name         : netList.php
+*  Name         : api.php
 *  Part of      : WhoIsInTheLab
-*  Description  : list user and devices
+*  Description  : API to list user and devices
 *  Author     	: Leon Anavi
 *  Email		: leon@anavi.org
 * ============================================================================
@@ -15,6 +15,8 @@ error_reporting(-1);
 
 require_once __DIR__."/../classes/NetworkObserver.php";
 
+$sFormat = (isset($_REQUEST['format'])) ? $_REQUEST['format'] : 'TXT';
+
 $observer = new NetworkObserver();
-$observer->listOnlineUsers('plain');
+$observer->listOnlineUsers($sFormat);
 ?>

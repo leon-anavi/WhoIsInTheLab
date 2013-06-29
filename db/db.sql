@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS `who_users` (
   `user_name2` varchar(40) collate cp1251_bulgarian_ci NOT NULL,
   `user_twitter` varchar(100) collate cp1251_bulgarian_ci NOT NULL,
   `user_facebook` varchar(100) collate cp1251_bulgarian_ci NOT NULL,
+  `user_tel` varchar(16) COLLATE cp1251_bulgarian_ci NOT NULL,
   PRIMARY KEY  (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=cp1251 COLLATE=cp1251_bulgarian_ci AUTO_INCREMENT=1 ;
 

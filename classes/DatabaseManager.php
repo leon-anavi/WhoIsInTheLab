@@ -20,7 +20,7 @@ class DatabaseManager
 
 	function __construct()
 	{
-		$this->m_db = new mysqli('', '', '', 'whoIsInTheLab');
+		$this->m_db = new mysqli('localhost', 'root', '', 'whoIsInTheLab');
 		if ($this->m_db->connect_error) 
 		{
 			die('Connect Error: ' . $this->m_db->connect_error);
@@ -63,7 +63,7 @@ class DatabaseManager
 		$sSQL = "SELECT ";
 		$sSQL .= "IFNULL(user_id,UUID()) as user, ";
 		$sSQL .= "user_name1, user_name2, ";
-		$sSQL .= "user_twitter, user_facebook ";
+		$sSQL .= "user_twitter, user_facebook, user_tel ";
 		$sSQL .= "FROM ".self::$DB_ONLINE;
 		$sSQL .= " LEFT JOIN ".self::$DB_DEVICES." ON online_MAC = device_MAC ";
 		$sSQL .= "LEFT JOIN ".self::$DB_USERS." ON device_uid = user_id ";
