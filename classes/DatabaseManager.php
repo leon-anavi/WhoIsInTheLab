@@ -67,7 +67,8 @@ class DatabaseManager
 		$sSQL = "SELECT ";
 		$sSQL .= "IFNULL(user_id,UUID()) as user, ";
 		$sSQL .= "user_name1, user_name2, ";
-		$sSQL .= "user_twitter, user_facebook, user_tel ";
+		$sSQL .= "user_twitter, user_facebook, ";
+		$sSQL .= "user_tel, user_email ";
 		$sSQL .= "FROM ".self::$DB_ONLINE;
 		$sSQL .= " LEFT JOIN ".self::$DB_DEVICES." ON online_MAC = device_MAC ";
 		$sSQL .= "LEFT JOIN ".self::$DB_USERS." ON device_uid = user_id ";

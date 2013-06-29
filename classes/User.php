@@ -24,13 +24,16 @@ class User
 	
 	private $m_sTel;
 
-	function __construct($sName1, $sName2, $sFacebook, $sTwitter, $sTel)
+	private $m_sEmail;
+
+	function __construct($sName1, $sName2, $sFacebook, $sTwitter, $sTel, $sEmail)
 	{
 		$this->m_sName1 = $sName1;
 		$this->m_sName2 = $sName2;
 		$this->m_sFacebook = $sFacebook;
 		$this->m_sTwitter = $sTwitter;
 		$this->m_sTel = $sTel;
+		$this->m_sEmail = $sEmail;
 	}
 	//------------------------------------------------------------------------------
 	
@@ -44,29 +47,32 @@ class User
 	{
 		switch($sName)
 		{
-			case "name":
+			case 'name':
 				return $this->getName();
 				
-			case "name1":
+			case 'name1':
 				return $this->m_sName1;
 				
-			case "name2":
+			case 'name2':
 				return $this->m_sName2;
 
-			case "facebook":
+			case 'facebook':
 				return $this->m_sFacebook;
 				
-			case "facebookLink":
+			case 'facebookLink':
 				return $this->getFacebookLink();
 				
-			case "twitter":
+			case 'twitter':
 				return $this->m_sTwitter;
 				
-			case "twitterLink":
+			case 'twitterLink':
 				return $this->getTwitterLink();
 				
-			case "tel":
+			case 'tel':
 				return $this->m_sTel;
+
+			case 'email':
+				return $this->m_sEmail;
 				
 			default:
 				//unknown property

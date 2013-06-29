@@ -78,11 +78,12 @@ class NetworkObserver
 				 (false == empty($device['user_name2'])) ||
 				 (false == empty($device['user_twitter'])) ||
 				 (false == empty($device['user_facebook'])) ||
-				 (false == empty($device['user_tel'])) )
+				 (false == empty($device['user_tel'])) || 
+				 (false == empty($device['user_email'])) )
 			{
 				$users[] = new User($device['user_name1'], $device['user_name2'], 
-									$device['user_facebook'], $device['user_twitter'],
-									$device['user_tel']);
+						$device['user_facebook'], $device['user_twitter'],
+						$device['user_tel'], $device['user_email']);
 			}
 		}
 		return $users;
@@ -99,10 +100,11 @@ class NetworkObserver
 		foreach($users as $user)
 		{
 			$jsonUser = array('name1' => $user->name1, 
-								'name2' => $user->name2,
-								'twitter' => $user->twitterLink,
-								'facebook' => $user->facebookLink,
-								'tel' => $user->tel);
+					'name2' => $user->name2,
+					'twitter' => $user->twitterLink,
+					'facebook' => $user->facebookLink,
+					'tel' => $user->tel,
+					'email' => $user->email);
 			array_push($jsonUsers, $jsonUser);
 		}
 		//append the total count nad the users to the data
@@ -135,6 +137,11 @@ class NetworkObserver
 				$sOutput .= " tel: <a href=\"callto:{$sTel}\">{$sTel}</a>";
 			}
 			echo "</li>\n";
+			$sEmail = $user->email;
+			if (false == empty($sEmail))
+			{
+				$sOutput .= " email: <a href=\"mailto:{$sEmail}\">{$sEmail}</a>";
+			}
 		}
 		$sOutput .= "</ul>\n";
 		return $sOutput;
@@ -198,6 +205,10 @@ class NetworkObserver
 				$xmlTel = $xml->createAttribute('tel');
 				$xmlTel->value = $user->tel;
 				$xmlUser->appendChild($xmlTel);
+				//email
+				$xmlEmail = $xml->createAttribute('email');
+				$xmlEmail->value = $user->email;
+				$xmlUser->appendChild($xmlEmail);
 				
 				$xmlUsers->appendChild($xmlUser);
 			}
@@ -229,12 +240,17 @@ class NetworkObserver
 			$sFb = $user->facebookLink;
 			if (false == empty($sFb))
 			{
-				$sOutput .= "Facebook: {$sFb}";
+				$sOutput .= "Facebook: {$sFb} ";
 			}
 			$sTel = $user->tel;
 			if (false == empty($sTel))
 			{
-				$sOutput .= "tel: {$sTel}";
+				$sOutput .= "tel: {$sTel} ";
+			}
+			$sEmail = $user->email;
+			if (false == empty($sEmail))
+			{
+				$sOutput .= "email: {$sEmail} ";
 			}
 			$sOutput .= "\n";
 		}
