@@ -15,7 +15,7 @@ error_reporting(-1);
 
 require_once __DIR__."/../classes/NetworkObserver.php";
 
-$sFormat = (isset($_REQUEST['format'])) ? $_REQUEST['format'] : 'TXT';
+$sFormat = (isset($_REQUEST['format'])) ? $_REQUEST['format'] : 'HTML';
 
 $observer = new NetworkObserver();
 $observer->listOnlineUsers($sFormat);

@@ -5,7 +5,7 @@
 *  Part of      : WhoIsInTheLab
 *  Description  : database manager
 *  Author     	: Leon Anavi
-*  Email		: leon@anavi.org
+*  Email	: leon@anavi.org
 * ============================================================================
 */
 
@@ -20,7 +20,11 @@ class DatabaseManager
 
 	function __construct()
 	{
-		$this->m_db = new mysqli('localhost', 'root', '', 'whoIsInTheLab');
+		$cfgFile = parse_ini_file("/aux0/WhoIsInTheLab/db.cfg", true);
+		$config = $cfgFile['MYSQL'];
+
+		$this->m_db = new mysqli($config['host'], $config['username'], 
+					 $config['password'], $config['database']);
 		if ($this->m_db->connect_error) 
 		{
 			die('Connect Error: ' . $this->m_db->connect_error);

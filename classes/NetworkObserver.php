@@ -186,6 +186,18 @@ class NetworkObserver
 				$xmlName2 = $xml->createAttribute('name2');
 				$xmlName2->value = $user->name2;
 				$xmlUser->appendChild($xmlName2);
+				//facebook
+				$xmlFb = $xml->createAttribute('facebook');
+				$xmlFb->value = $user->facebook;
+				$xmlUser->appendChild($xmlFb);
+				//twitter
+				$xmlTwitter = $xml->createAttribute('twitter');
+				$xmlTwitter->value = $user->twitter;
+				$xmlUser->appendChild($xmlTwitter);
+				//tel
+				$xmlTel = $xml->createAttribute('tel');
+				$xmlTel->value = $user->tel;
+				$xmlUser->appendChild($xmlTel);
 				
 				$xmlUsers->appendChild($xmlUser);
 			}
