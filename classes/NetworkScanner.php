@@ -47,7 +47,7 @@ class NetworkScanner
 	 */
 	private function defaultGateway()
 	{
-		return trim(shell_exec("route -n | grep 'UG[ \t]' | awk '{print $2}'"));
+		return trim(shell_exec("sudo route -n | grep 'UG[ \t]' | awk '{print $2}'"));
 	}
 	//------------------------------------------------------------------------------
 	
