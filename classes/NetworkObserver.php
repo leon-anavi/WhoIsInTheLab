@@ -20,9 +20,18 @@ class NetworkObserver
 
 	private $m_dbCtrl;
 
+	private $m_nDevicesCount;
+
+	private $m_nGuests;
+
+	private $m_users;
+
 	function __construct()
 	{
 		$this->m_dbCtrl = new DatabaseManager();
+		$this->m_nDevicesCount = 0;
+		$this->m_nGuests = 0;
+		$this->m_users = array();
 	}
 	//------------------------------------------------------------------------------
 	
@@ -43,27 +52,27 @@ class NetworkObserver
 		$sType = strtoupper($sType);
 		
 		$devices = $this->m_dbCtrl->listOnlineDevices();
-		$nDevicesCount = count($devices);
-		$users = $this->extractUsers($devices);
+		$this->m_nDevicesCount = count($devices);
+		$this->extractUsers($devices);
 	
 		switch($sType)
 		{
 			case 'JSON':
-				echo $this->listJSON($nDevicesCount, $users);
+				echo $this->listJSON();
 			break;
 			
 			case 'HTML':
-				echo $this->listHTML($nDevicesCount, $users);
+				echo $this->listHTML();
 			break;
 			
 			case 'XML':
-				echo $this->listXML($nDevicesCount, $users);
+				echo $this->listXML();
 			break;
 			
 			case 'TXT':
 			default:
 				//plain text
-				echo $this->listPlainText($nDevicesCount, $users);
+				echo $this->listPlainText();
 			break;
 		}
 	}
@@ -72,6 +81,7 @@ class NetworkObserver
 	private function extractUsers($devices)
 	{
 		$users = array();
+		$nGuests = 0; 
 		foreach($devices as $device)
 		{
 			if ( (false == empty($device['user_name1'])) ||
@@ -85,19 +95,25 @@ class NetworkObserver
 						$device['user_facebook'], $device['user_twitter'],
 						$device['user_tel'], $device['user_email']);
 			}
+			else
+			{
+				//all unknown devices are marked as guests
+				$nGuests += 1;
+			}
 		}
-		return $users;
+		$this->m_nGuests = $nGuests;
+		$this->m_users = $users;
 	}
 	//------------------------------------------------------------------------------
 	
-	private function listJSON($nDevicesCount, $users)
+	private function listJSON()
 	{
 		$output = array();
 		//error status
 		$output['error'] = array('ErrCode' => 0, 'ErrMsg' => '');
 		//prepare users
 		$jsonUsers = array();
-		foreach($users as $user)
+		foreach($this->m_users as $user)
 		{
 			$jsonUser = array('name1' => $user->name1, 
 					'name2' => $user->name2,
@@ -108,16 +124,19 @@ class NetworkObserver
 			array_push($jsonUsers, $jsonUser);
 		}
 		//append the total count nad the users to the data
-		$output['data'] = array('count' => $nDevicesCount, 'users' => $jsonUsers );
+		$output['data'] = array('count' => $this->m_nDevicesCount,
+					'guests' => $this->m_nGuests, 
+					'users' => $jsonUsers );
 		return json_encode($output);
 	}
 	//------------------------------------------------------------------------------
 	
-	private function listHTML($nDevicesCount, $users)
+	private function listHTML()
 	{
-		$sOutput = "<h2>Online: {$nDevicesCount}</h2>\n";
+		$sOutput = "<h2>Online Devices: {$this->m_nDevicesCount}</h2>\n";
+		$sOutput .= "<h2>Guests: {$this->m_nGuests}</h2>\n";
 		$sOutput .= "<ul>\n";
-		foreach($users as $user)
+		foreach($this->m_users as $user)
 		{
 			$sOutput .= "<li>";
 			$sOutput .= $user->name;
@@ -148,7 +167,7 @@ class NetworkObserver
 	}
 	//------------------------------------------------------------------------------
 	
-	private function listXML($nDevicesCount, $users)
+	private function listXML()
 	{
 		$sOutPut = '';
 		try
@@ -175,14 +194,19 @@ class NetworkObserver
 			$root->appendChild($data);
 			//total number of devices
 			$count = $xml->createElement('count');
-			$countText = $xml->createTextNode($nDevicesCount);
+			$countText = $xml->createTextNode($this->m_nDevicesCount);
 			$count->appendChild($countText);
 			$data->appendChild($count);
+			//guests
+			$guests = $xml->createElement('guests');
+			$guestsText = $xml->createTextNode($this->m_nGuests);
+			$guests->appendChild($guestsText);
+			$data->appendChild($guests);
 			//users
 			$xmlUsers = $xml->createElement('users');
 			$data->appendChild($xmlUsers);
 			//user
-			foreach($users as $user)
+			foreach($this->m_users as $user)
 			{
 				$xmlUser = $xml->createElement('user');
 				//name1
@@ -226,10 +250,11 @@ class NetworkObserver
 	}
 	//------------------------------------------------------------------------------
 	
-	private function listPlainText($nDevicesCount, $users)
+	private function listPlainText()
 	{
-		$sOutput = "Online: {$nDevicesCount} \n";
-		foreach($users as $user)
+		$sOutput = "Online Devices: {$this->m_nDevicesCount} \n";
+		$sOutput .= "Guests: {$this->m_nGuests} \n";
+		foreach($this->m_users as $user)
 		{
 			$sOutput .= "Name: {$user->name} ";
 			$sTwitter = $user->twitterLink;
