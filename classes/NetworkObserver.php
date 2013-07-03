@@ -135,6 +135,7 @@ class NetworkObserver
 	{
 		$sOutput = "<h2>Online Devices: {$this->m_nDevicesCount}</h2>\n";
 		$sOutput .= "<h2>Guests: {$this->m_nGuests}</h2>\n";
+		$sOutput .= "<h2>Users:</h2>\n";
 		$sOutput .= "<ul>\n";
 		foreach($this->m_users as $user)
 		{
@@ -254,6 +255,7 @@ class NetworkObserver
 	{
 		$sOutput = "Online Devices: {$this->m_nDevicesCount} \n";
 		$sOutput .= "Guests: {$this->m_nGuests} \n";
+		$sOutput .= "Users: \n";
 		foreach($this->m_users as $user)
 		{
 			$sOutput .= "Name: {$user->name} ";
