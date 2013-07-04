@@ -15,9 +15,6 @@ require_once "User.php";
 class NetworkObserver
 {
 
-	private static $LINK_TWITTER = 'https://twitter.com/';
-	private static $LINK_FACEBOOK = 'https://www.facebook.com/';
-
 	private $m_dbCtrl;
 
 	private $m_nDevicesCount;
@@ -88,12 +85,15 @@ class NetworkObserver
 				 (false == empty($device['user_name2'])) ||
 				 (false == empty($device['user_twitter'])) ||
 				 (false == empty($device['user_facebook'])) ||
+				 (false == empty($device['user_google_plus'])) ||
+				 (false == empty($device['user_website'])) ||
 				 (false == empty($device['user_tel'])) || 
 				 (false == empty($device['user_email'])) )
 			{
 				$users[] = new User($device['user_name1'], $device['user_name2'], 
-						$device['user_facebook'], $device['user_twitter'],
-						$device['user_tel'], $device['user_email']);
+						$device['user_facebook'], $device['user_twitter'], 
+						$device['user_google_plus'], $device['user_tel'],
+						$device['user_email'], $device['user_website']);
 			}
 			else
 			{
@@ -119,8 +119,10 @@ class NetworkObserver
 					'name2' => $user->name2,
 					'twitter' => $user->twitterLink,
 					'facebook' => $user->facebookLink,
+					'googlePlus' => $user->googlePlusLink,
 					'tel' => $user->tel,
-					'email' => $user->email);
+					'email' => $user->email,
+					'website' => $user->website);
 			array_push($jsonUsers, $jsonUser);
 		}
 		//append the total count nad the users to the data
@@ -135,33 +137,55 @@ class NetworkObserver
 	{
 		$sOutput = "<h2>Online Devices: {$this->m_nDevicesCount}</h2>\n";
 		$sOutput .= "<h2>Guests: {$this->m_nGuests}</h2>\n";
+		if (0 == count($this->m_users))
+		{
+			//No more data is available so we can terminate the method
+			return $sOutput;
+		}
 		$sOutput .= "<h2>Users:</h2>\n";
 		$sOutput .= "<ul>\n";
 		foreach($this->m_users as $user)
 		{
 			$sOutput .= "<li>";
 			$sOutput .= $user->name;
+
 			$sTwitter = $user->twitter;
 			if (false == empty($sTwitter))
 			{
 				$sOutput .= " twitter: <a href =\"{$user->twitterLink}\">{$sTwitter}</a>";
 			}
+
 			$sFb = $user->facebook;
 			if (false == empty($sFb))
 			{
 				$sOutput .= " facebook: <a href=\"{$user->facebookLink}\">{$sFb}</a>";
 			}
+
+			$sGooglePlus = $user->googlePlus;
+			if (false == empty($sGooglePlus))
+			{
+				$sOutput .= " <a href=\"{$user->googlePlusLink}\">Google+</a>";
+			}
+
 			$sTel = $user->tel;
 			if (false == empty($sTel))
 			{
 				$sOutput .= " tel: <a href=\"callto:{$sTel}\">{$sTel}</a>";
 			}
-			echo "</li>\n";
+
 			$sEmail = $user->email;
 			if (false == empty($sEmail))
 			{
-				$sOutput .= " email: <a href=\"mailto:{$sEmail}\">{$sEmail}</a>";
+				$sOutput .= " e-mail: <a href=\"mailto:{$sEmail}\">{$sEmail}</a>";
 			}
+
+			$sWebsite = $user->website;
+			if (false == empty($sWebsite))
+			{
+				$sOutput .= " website: <a href=\"{$sWebsite}\">{$sWebsite}</a>";
+			}
+
+			$sOutput .= "</li>\n";
 		}
 		$sOutput .= "</ul>\n";
 		return $sOutput;
@@ -170,7 +194,7 @@ class NetworkObserver
 	
 	private function listXML()
 	{
-		$sOutPut = '';
+		$sOutput = '';
 		try
 		{
 			$xml = new DOMDocument("1.0");
@@ -226,6 +250,10 @@ class NetworkObserver
 				$xmlTwitter = $xml->createAttribute('twitter');
 				$xmlTwitter->value = $user->twitter;
 				$xmlUser->appendChild($xmlTwitter);
+				//Google+
+				$xmlGooglePlus = $xml->createAttribute('googlePlus');
+				$xmlGooglePlus->value = $user->googlePlus;
+				$xmlUser->appendChild($xmlGooglePlus);	
 				//tel
 				$xmlTel = $xml->createAttribute('tel');
 				$xmlTel->value = $user->tel;
@@ -234,20 +262,23 @@ class NetworkObserver
 				$xmlEmail = $xml->createAttribute('email');
 				$xmlEmail->value = $user->email;
 				$xmlUser->appendChild($xmlEmail);
+				//website
+				$xmlWebsite = $xml->createAttribute('website');
+				$xmlWebsite->value = $user->website;
+				$xmlUser->appendChild($xmlWebsite);
 				
 				$xmlUsers->appendChild($xmlUser);
 			}
 			
 			$xml->preserveWhiteSpace = false;
 			$xml->formatOutput = true;
-			$sOutPut = $xml->saveXML();
+			$sOutput = $xml->saveXML();
 		}
 		catch (Exception $ex)
 		{
 			//Nothing to do
-			print_r($ex);
 		}
-		return $sOutPut;
+		return $sOutput;
 	}
 	//------------------------------------------------------------------------------
 	
@@ -255,30 +286,53 @@ class NetworkObserver
 	{
 		$sOutput = "Online Devices: {$this->m_nDevicesCount} \n";
 		$sOutput .= "Guests: {$this->m_nGuests} \n";
+		if (0 == count($this->m_users))
+		{
+			//exit from the function because no more data is available
+			return $sOutput;
+		}
 		$sOutput .= "Users: \n";
 		foreach($this->m_users as $user)
 		{
 			$sOutput .= "Name: {$user->name} ";
+
 			$sTwitter = $user->twitterLink;
 			if (false == empty($sTwitter))
 			{
 				$sOutput .= "Twitter: {$sTwitter} ";
 			}
+
 			$sFb = $user->facebookLink;
 			if (false == empty($sFb))
 			{
 				$sOutput .= "Facebook: {$sFb} ";
 			}
+
+			$sGooglePlus = $user->googlePlus;
+                        if (false == empty($sGooglePlus))
+                        {
+                                $sOutput .= " Google+:{$user->googlePlusLink}";
+                        }
+
 			$sTel = $user->tel;
 			if (false == empty($sTel))
 			{
 				$sOutput .= "tel: {$sTel} ";
 			}
+
 			$sEmail = $user->email;
 			if (false == empty($sEmail))
 			{
 				$sOutput .= "email: {$sEmail} ";
 			}
+
+			$sWebsite = $user->website;
+                        if (false == empty($sWebsite))
+                        {
+                                $sOutput .= " website: {$sWebsite}";
+                        }
+
+
 			$sOutput .= "\n";
 		}
 		return $sOutput;
