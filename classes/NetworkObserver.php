@@ -135,7 +135,15 @@ class NetworkObserver
 	
 	private function listHTML()
 	{
-		$sOutput = "<h2>Online Devices: {$this->m_nDevicesCount}</h2>\n";
+		$sOutput = '';
+		
+		// very hacking templating
+		ob_start();
+		include "../tmpl/header.php";
+		$sOutput .= ob_get_contents();
+		ob_end_clean();
+	
+		$sOutput .= "<h2>Online Devices: {$this->m_nDevicesCount}</h2>\n";
 		$sOutput .= "<h2>Guests: {$this->m_nGuests}</h2>\n";
 		if (0 == count($this->m_users))
 		{
@@ -143,49 +151,14 @@ class NetworkObserver
 			return $sOutput;
 		}
 		$sOutput .= "<h2>Users:</h2>\n";
-		$sOutput .= "<ul>\n";
+		$sOutput .= "<ul role=\"users\">\n";
 		foreach($this->m_users as $user)
 		{
-			$sOutput .= "<li>";
-			$sOutput .= $user->name;
-
-			$sTwitter = $user->twitter;
-			if (false == empty($sTwitter))
-			{
-				$sOutput .= " twitter: <a href =\"{$user->twitterLink}\">{$sTwitter}</a>";
-			}
-
-			$sFb = $user->facebook;
-			if (false == empty($sFb))
-			{
-				$sOutput .= " facebook: <a href=\"{$user->facebookLink}\">{$sFb}</a>";
-			}
-
-			$sGooglePlus = $user->googlePlus;
-			if (false == empty($sGooglePlus))
-			{
-				$sOutput .= " <a href=\"{$user->googlePlusLink}\">Google+</a>";
-			}
-
-			$sTel = $user->tel;
-			if (false == empty($sTel))
-			{
-				$sOutput .= " tel: <a href=\"callto:{$sTel}\">{$sTel}</a>";
-			}
-
-			$sEmail = $user->email;
-			if (false == empty($sEmail))
-			{
-				$sOutput .= " e-mail: <a href=\"mailto:{$sEmail}\">{$sEmail}</a>";
-			}
-
-			$sWebsite = $user->website;
-			if (false == empty($sWebsite))
-			{
-				$sOutput .= " website: <a href=\"{$sWebsite}\">{$sWebsite}</a>";
-			}
-
-			$sOutput .= "</li>\n";
+			// very hacky templating
+			ob_start();
+			include "../tmpl/user.php";
+			$sOutput .= ob_get_contents();
+			ob_end_clean();
 		}
 		$sOutput .= "</ul>\n";
 		return $sOutput;
