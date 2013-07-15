@@ -14,6 +14,8 @@ class User
 	private static $LINK_TWITTER = 'https://twitter.com/';
 
 	private static $LINK_FACEBOOK = 'https://www.facebook.com/';
+	
+	private static $LINK_FACEBOOK_PICTURE = 'http://graph.facebook.com/%s/picture?type=large';
 
 	private static $LINK_GOOGLEPLUS = 'https://plus.google.com/';
 
@@ -66,18 +68,30 @@ class User
 				
 			case 'name2':
 				return $this->m_sName2;
+			
+			case 'hasFacebook':
+				return false == empty($this->m_sFacebook);
 
 			case 'facebook':
 				return $this->m_sFacebook;
 				
 			case 'facebookLink':
 				return $this->getFacebookLink();
+			
+			case 'facebookPicture':
+				return $this->getFacebookPicture();
 				
+			case 'hasTwitter':
+				return false == empty($this->m_sTwitter);
+
 			case 'twitter':
 				return $this->m_sTwitter;
 				
 			case 'twitterLink':
 				return $this->getTwitterLink();
+
+			case 'hasGooglePlus':
+				return false == empty($this->m_sGooglePlus);
 
 			case 'googlePlus':
 				return $this->m_sGooglePlus;
@@ -85,12 +99,21 @@ class User
 			case 'googlePlusLink':
 				return $this->getGooglePlusLink();
 				
+			case 'hasTel':
+				return false == empty($this->m_sTel);
+
 			case 'tel':
 				return $this->m_sTel;
+
+			case 'hasEmail':
+				return false == empty($this->m_sEmail);
 
 			case 'email':
 				return $this->m_sEmail;
 		
+			case 'hasWebsite':
+				return false == empty($this->m_sWebsite);
+
 			case 'website':
 				return $this->m_sWebsite;
 					
@@ -120,6 +143,17 @@ class User
 			$sFbLink = self::$LINK_FACEBOOK . $this->m_sFacebook;
 		}
 		return $sFbLink;
+	}
+	//------------------------------------------------------------------------------
+	
+	private function getFacebookPicture()
+	{
+		$sFbPictureLink = '';
+		if (false == empty($this->m_sFacebook))
+		{
+			$sFbPictureLink = sprintf(self::$LINK_FACEBOOK_PICTURE, $this->m_sFacebook);
+		}
+		return $sFbPictureLink;
 	}
 	//------------------------------------------------------------------------------
 	
