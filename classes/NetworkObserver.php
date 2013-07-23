@@ -109,8 +109,6 @@ class NetworkObserver
 	private function listJSON()
 	{
 		$output = array();
-		//error status
-		$output['error'] = array('ErrCode' => 0, 'ErrMsg' => '');
 		//prepare users
 		$jsonUsers = array();
 		foreach($this->m_users as $user)
