@@ -189,8 +189,9 @@ class NetworkObserver
 		$sOutput .= ob_get_contents();
 		ob_end_clean();
 	
-		$sOutput .= "<h2>Online Devices: {$this->m_nDevicesCount}</h2>\n";
-		$sOutput .= "<h2>Guests: {$this->m_nGuests}</h2>\n";
+		$sOutput .= "<h2>Online Users: ".count($this->m_users)."</h2>\n";
+		$sOutput .= "<h2>Guest Devices: {$this->m_nGuests}</h2>\n";
+		$sOutput .= "<h2>Total: {$this->m_nDevicesCount}</h2>\n";
 		if (0 == count($this->m_users))
 		{
 			//No more data is available so we can terminate the method
@@ -303,8 +304,9 @@ class NetworkObserver
 	
 	private function listPlainText()
 	{
-		$sOutput = "Online Devices: {$this->m_nDevicesCount} \n";
-		$sOutput .= "Guests: {$this->m_nGuests} \n";
+		$sOutput = "Online Users: ".count($this->m_users)." \n";
+		$sOutput .= "Guest Devices: {$this->m_nGuests}\n";
+		$sOutput .= "Total: {$this->m_nDevicesCount} \n";
 		if (0 == count($this->m_users))
 		{
 			//exit from the function because no more data is available
