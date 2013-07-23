@@ -22,6 +22,8 @@ class NetworkObserver
 	private $m_nGuests;
 
 	private $m_users;
+	
+	const GUEST = 'guest';
 
 	function __construct()
 	{
@@ -66,6 +68,10 @@ class NetworkObserver
 				echo $this->listXML();
 			break;
 			
+			case 'USERS':
+				echo $this->listUsers();
+			break;
+			
 			case 'TXT':
 			default:
 				//plain text
@@ -106,10 +112,14 @@ class NetworkObserver
 	}
 	//------------------------------------------------------------------------------
 	
-	private function listJSON()
+	/*
+	 * Returns an array of all online users
+	 *
+	 * @throw nothing
+	 * @return array
+	 */
+	private function getUsersAsArray()
 	{
-		$output = array();
-		//prepare users
 		$jsonUsers = array();
 		foreach($this->m_users as $user)
 		{
@@ -123,6 +133,21 @@ class NetworkObserver
 					'website' => $user->website);
 			array_push($jsonUsers, $jsonUser);
 		}
+		return $jsonUsers;
+	}
+	//------------------------------------------------------------------------------
+	
+	/**
+	 * Lists all info as JSON
+	 *
+	 * @throw nothing
+	 * @return nothing
+	 */
+	private function listJSON()
+	{
+		$output = array();
+		//prepare users
+		$jsonUsers = $this->getUsersAsArray();
 		//append the total count nad the users to the data
 		$output['data'] = array('count' => $this->m_nDevicesCount,
 					'guests' => $this->m_nGuests, 
@@ -131,6 +156,29 @@ class NetworkObserver
 	}
 	//------------------------------------------------------------------------------
 	
+	/*
+	 * Lists all users with all guests on separate lines. Makes the life of 
+	 * (lame) front-end developers easier :) The returned collection should be 
+	 * convenient for Backbone.js.
+	 *
+	 * @throw nothing
+	 * @return JSON
+	 */	
+	private function listUsers()
+	{
+		$output = array();
+		//prepare users
+		$jsonUsers = $this->getUsersAsArray();
+		for($nIter=0;$nIter<$this->m_nGuests;$nIter++)
+		{
+			$jsonGuest = array('name1' => self::GUEST);
+			array_push($jsonUsers, $jsonGuest);
+		}
+		$output['users'] = $jsonUsers;
+		return json_encode($output);
+	}
+	//------------------------------------------------------------------------------
+
 	private function listHTML()
 	{
 		$sOutput = '';
