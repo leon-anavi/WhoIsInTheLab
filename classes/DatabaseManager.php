@@ -17,6 +17,7 @@ class DatabaseManager
 	private static $DB_DEVICES = 'who_devices';
 	private static $DB_ONLINE = 'who_online';
 	private static $DB_USERS = 'who_users';
+	private static $DB_HISTORY = 'who_history';
 
 	function __construct()
 	{
@@ -40,25 +41,76 @@ class DatabaseManager
 	
 	public function saveOnlineDevices($devices)
 	{
-		//remove all existing records
-		$this->removeAllOnlineDevices();
-		
-		$sSQL = "INSERT INTO ".self::$DB_ONLINE." ( ";
-		$sSQL .= "online_MAC, online_IP) VALUES ";
-		$bIsFirst = true;
-		foreach ($devices as $sMAC => $sIP)
+	    $sTable = self::$DB_ONLINE;
+	
+	    $sSQL = <<<ESQL
+	        SELECT online_id, online_MAC, online_since
+	        FROM $sTable
+ESQL;
+	    $res = $this->m_db->query($sSQL);
+	    
+	    $existingDevices = array();
+	    while ($row = $res->fetch_assoc())
 		{
-			if (false == $bIsFirst)
-			{
-				$sSQL .= ", ";
-			}
-			else
-			{
-				$bIsFirst = false;
-			}
-			$sSQL .= "('".addslashes($sMAC)."',  '".addslashes($sIP)."')";
+			$existingDevices[$row['online_MAC']] = array(
+			    'id' => $row['online_id'],
+			    'since' => $row['online_since']);
 		}
-		$this->m_db->query($sSQL);
+		
+		$oldDevices = array_diff_key($existingDevices, $devices);
+		$newDevices = array_diff_key($devices, $existingDevices);
+
+        // Insert the new devices we found
+        if (count($newDevices)) {
+		    $sSQL = "INSERT INTO $sTable ( ";
+		    $sSQL .= "online_MAC, online_IP) VALUES ";
+		    $bIsFirst = true;
+		    foreach ($newDevices as $sMAC => $sIP)
+		    {
+			    if (false == $bIsFirst)
+			    {
+				    $sSQL .= ", ";
+			    }
+			    else
+			    {
+				    $bIsFirst = false;
+			    }
+			    $sSQL .= "('".addslashes($sMAC)."',  '".addslashes($sIP)."')";
+		    }
+		    $this->m_db->query($sSQL);
+		}
+
+        // Delete the devices who are no longer online
+        if (count($oldDevices)) {
+		    $sSQL = "DELETE FROM $sTable WHERE online_id in (";
+		    $bIsFirst = true;
+		    foreach ($oldDevices as $def) {
+		        if ($bIsFirst) { 
+		            $bIsFirst = false;
+		        } else {
+		            $sSQL .= ', ';
+		        }
+		        $sSQL .= "'" . addslashes($def['id']) . "'";
+		    }
+		    $sSQL .= ");";
+		    $this->m_db->query($sSQL);
+		}
+
+
+        // Delete the devices who are no longer online
+        if (count($oldDevices)) {
+		    $sSQL = "INSERT INTO " . self::$DB_HISTORY . " ( history_MAC, history_from ) VALUES ";
+		    $bIsFirst = true;
+		    foreach ($oldDevices as $sMAC => $def) {
+		        if ($bIsFirst) { 
+		            $bIsFirst = false;
+		        } else {
+		            $sSQL .= ', ';
+		        }
+			    $sSQL .= "('".addslashes($sMAC)."', '".addslashes($def['since'])."')";
+		    }
+		    $this->m_db->query($sSQL);
+		}
 	}
 	//------------------------------------------------------------------------------
 	
