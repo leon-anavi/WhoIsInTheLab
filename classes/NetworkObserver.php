@@ -43,7 +43,7 @@ class NetworkObserver
 	 *
 	 * @return nothing
 	 */
-	public function listOnlineUsers($sType)
+	public function listOnlineUsers($sType, $callback=false)
 	{
 		//make sure that the argument will be process correctly
 		$sType = strtoupper($sType);
@@ -55,22 +55,39 @@ class NetworkObserver
 		switch($sType)
 		{
 			case 'JSON':
-				echo $this->listJSON();
+			    $contentType = 'application/json';
+				$response = $this->listJSON();
 			break;
 			
 			case 'HTML':
-				echo $this->listHTML();
+			    $contentType = 'text/html';
+				$response = $this->listHTML();
 			break;
 			
 			case 'XML':
-				echo $this->listXML();
+			    $contentType = 'application/xml';
+				$response = $this->listXML();
 			break;
 			
 			case 'TXT':
 			default:
 				//plain text
-				echo $this->listPlainText();
+			    $contentType = 'text/plain';
+				$response = $this->listPlainText();
 			break;
+		}
+		
+		if ($callback) {
+		    if ($sType != 'JSON')
+		        $data = array(strtolower($sType) => $response);
+		    else
+		        $data = json_decode($response);
+		    
+		    header('Content-Type', 'text/javascript');
+		    echo $callback . '(' . json_encode($data, JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT) . ')';
+		} else {
+		    header('Content-Type', $contentType);
+		    echo $response;
 		}
 	}
 	//------------------------------------------------------------------------------
