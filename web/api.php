@@ -16,7 +16,8 @@ error_reporting(-1);
 require_once __DIR__."/../classes/NetworkObserver.php";
 
 $sFormat = (isset($_REQUEST['format'])) ? $_REQUEST['format'] : 'HTML';
+$sCallback = (isset($_REQUEST['callback'])) ? $_REQUEST['callback'] : false;
 
 $observer = new NetworkObserver();
-$observer->listOnlineUsers($sFormat);
+$observer->listOnlineUsers($sFormat, $sCallback);
 ?>
