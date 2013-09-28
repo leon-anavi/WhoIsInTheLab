@@ -1,0 +1,41 @@
+<div class="row">
+    <div class="span12">
+        <h1>Users in the lab</h1>
+
+        <% _.each(this.collection.models, function(model, index) {
+            var email = model.get('email');
+            var tel = model.get('tel');
+            var twitter =  model.get('twitter');
+            var facebook = model.get('facebook');
+            var googlePlus = model.get('googlePlus');
+            %>
+            <article>
+                <h2>
+                    <% if(facebook) { %>
+                        <img role="picture" src="http://graph.facebook.com/<%= facebook.replace('https://www.facebook.com/', '') %>/picture?type=large" height="56">
+                    <% } %>
+                    Име - <%= model.get('name1') %> <%= model.get('name2') %>
+                </h2>
+                <ul>
+                    <% if(email) { %>
+                        <li>email: <%= email %></li>
+                    <% } %>
+                    <% if(tel) { %>
+                        <li>tel: <%= model.get('tel') %></li>
+                    <% } %>
+                    <% if(twitter) { %>
+                        <li>twitter: <%= model.get('twitter') %></li>
+                    <% } %>
+                    <% if(facebook) { %>
+                        <li>facebook: <%= model.get('facebook') %></li>
+                    <% } %>
+                    <% if(googlePlus) { %>
+                        <li>googlePlus: <%= model.get('googlePlus') %></li>
+                    <% } %>
+                </ul>
+
+            </article>
+        <% }) %>
+
+    </div>
+</div>
