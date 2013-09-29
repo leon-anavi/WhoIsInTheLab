@@ -22,6 +22,11 @@
                 view.template = _.template(data);
                 view.render();
             });
+
+            $('.call-dropdown').on('click', function(){
+                $('.hidden').toggleClass('show');
+                console.log('test');
+            });
         },
 
         render: function(){

@@ -2,13 +2,16 @@
     <div class="span12">
         <h1>Users in the lab</h1>
 
+        <a href="javascript:;" class="btn btn-default call-dropdown">who is in the lab</a>
+        <div class="hidden">
         <% _.each(this.collection.models, function(model, index) {
             var email = model.get('email');
             var tel = model.get('tel');
             var twitter =  model.get('twitter');
             var facebook = model.get('facebook');
             var googlePlus = model.get('googlePlus');
-            %>
+            %>    
+
             <article>
                 <h2>
                     <% if(facebook) { %>
@@ -36,6 +39,7 @@
 
             </article>
         <% }) %>
+        </div>
 
     </div>
 </div>
