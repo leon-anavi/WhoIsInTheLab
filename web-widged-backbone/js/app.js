@@ -55,6 +55,12 @@ App.Env = App.Env || {};
             //create new book model if not present
             router.collections.users = router.collections.users || new App.Collections.Users();
 
+            // router.views.usersView.render();
+
+            router.views.usersView = new  App.Views.UsersView({collection: router.collections.users});
+
+
+            //this will be replaced with JSONP call
             $.get(App.Env.baseUrl + 'test-api/get_users.php', function(data) {
                 console.log(data);
 
@@ -62,11 +68,9 @@ App.Env = App.Env || {};
                     router.collections.users.push(item);
                 });
 
-                if(router.views.usersView) {
-                    router.views.usersView.render();
-                }else {
-                    router.views.usersView = new  App.Views.UsersView({collection: router.collections.users});
-                }
+                router.models.guests = data.data.guests;
+
+                router.trigger('users:updated');
 
             }, 'json');
 
