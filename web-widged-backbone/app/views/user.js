@@ -33,12 +33,12 @@
             });
 
             App.router.trigger('users:update');
-
+            console.log('init view');
         },
 
         render: function(){
             var view = this;
-
+            console.log('render view');
             view.shown = true;
             view.$el.html(this.template.call(this)).fadeIn();
 

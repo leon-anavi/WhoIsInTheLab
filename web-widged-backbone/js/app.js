@@ -44,12 +44,15 @@ App.Env = App.Env || {};
                 console.info(eventName);
             });
 
+            //create new users collection if not present
+            router.collections.users = router.collections.users || new App.Collections.Users();
+
             $('#js-show-users').on('click', function(){
                 if(Backbone.history.fragment === '!/show-users') {
                     router.navigate('#!/');
                     router.trigger('users:hide');
                 }else {
-                    router.navigate('#!/show-users');
+                    router.navigate('#!/show-users', {trigger: true});
                     router.trigger('users:update');
                 }
             });
@@ -62,7 +65,6 @@ App.Env = App.Env || {};
 
                     _.each(data.data.users, function(user, index) {
                         usersList.push(user);
-                        // router.collections.users.push(user);
                     });
 
                     router.models.guests = data.data.guests;
@@ -82,11 +84,9 @@ App.Env = App.Env || {};
         users: function() {
             var router = this;
 
-            //create new users collection if not present
-            router.collections.users = router.collections.users || new App.Collections.Users();
-
             //create new users view if not present
             router.views.usersView = router.views.usersView || new  App.Views.UsersView({collection: router.collections.users});
+
 
             // turn off all index events
             router.on('all', function (eventName) {

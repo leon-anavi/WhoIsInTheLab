@@ -1,7 +1,6 @@
 <div class="row" id="users-view">
 
-    <div class="span12">
-        <div class="hidden show">
+    <div class="span12 dropdown-users">
         <% _.each(this.collection.models, function(model, index) {
             var email = model.get('email');
             var tel = model.get('tel');
@@ -39,7 +38,5 @@
 
             </article>
         <% }) %>
-        </div>
-
     </div>
 </div>
