@@ -1,0 +1,42 @@
+<div class="row" id="users-view">
+
+    <div class="span12 dropdown-users">
+        <% _.each(this.collection.models, function(model, index) {
+            var email = model.get('email');
+            var tel = model.get('tel');
+            var twitter =  model.get('twitter');
+            var facebook = model.get('facebook');
+            var googlePlus = model.get('googlePlus');
+            %>
+
+            <article class="lab-person">
+                <div class="avatar-holder">
+                    <% if(facebook) { %>
+                        <img role="picture" src="http://graph.facebook.com/<%= facebook.replace('https://www.facebook.com/', '') %>/picture?type=large">
+                    <% } %>
+                </div>
+                <h2 class="person-name">
+                    <%= model.get('name1') %> <%= model.get('name2') %>
+                </h2>
+                <div class="person-contacts">
+                    <% if(email) { %>
+                        <a href="mailto:<%= email %>" title="email" target="_blank" class="contact-detail icon-mail"></a>
+                    <% } %>
+                    <% if(tel) { %>
+                        <a href="javascript:;" title="<%= model.get('tel') %>" target="_blank" class="contact-detail icon-phone"><!-- --></a>
+                    <% } %>
+                    <% if(twitter) { %>
+                        <a href="<%= model.get('twitter') %>" title="twitter" target="_blank" class="contact-detail icon-twitter"><!-- --></a>
+                    <% } %>
+                    <% if(facebook) { %>
+                        <a href="<%= model.get('facebook') %>" title="facebook" target="_blank" class="contact-detail icon-facebook"><!-- --></a>
+                    <% } %>
+                    <% if(googlePlus) { %>
+                        <a href="<%= model.get('googlePlus') %>" title="googlePlus" target="_blank" class="contact-detail icon-google-plus"><!-- --></a>
+                    <% } %>
+                </div>
+
+            </article>
+        <% }) %>
+    </div>
+</div>
