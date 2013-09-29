@@ -1,8 +1,6 @@
 <div class="row">
     <div class="span12">
-        <h1>Users in the lab</h1>
-
-        <div class="hidden">
+        <div class="hidden show">
         <% _.each(this.collection.models, function(model, index) {
             var email = model.get('email');
             var tel = model.get('tel');
@@ -11,30 +9,32 @@
             var googlePlus = model.get('googlePlus');
             %>    
 
-            <article>
-                <h2>
+            <article class="lab-person">
+                <div class="avatar-holder">
                     <% if(facebook) { %>
-                        <img role="picture" src="http://graph.facebook.com/<%= facebook.replace('https://www.facebook.com/', '') %>/picture?type=large" height="56">
+                        <img role="picture" src="http://graph.facebook.com/<%= facebook.replace('https://www.facebook.com/', '') %>/picture?type=large">
                     <% } %>
-                    Име - <%= model.get('name1') %> <%= model.get('name2') %>
+                </div>
+                <h2 class="person-name">
+                    <%= model.get('name1') %> <%= model.get('name2') %>
                 </h2>
-                <ul>
+                <div class="person-contacts">
                     <% if(email) { %>
-                        <li>email: <%= email %></li>
+                        <a href="mailto:<%= email %>" title="email" target="_blank" class="contact-detail icon-mail"></a>
                     <% } %>
                     <% if(tel) { %>
-                        <li>tel: <%= model.get('tel') %></li>
+                        <a href="javascript:;" title="<%= model.get('tel') %>" target="_blank" class="contact-detail icon-phone"><!-- --></a>
                     <% } %>
                     <% if(twitter) { %>
-                        <li>twitter: <%= model.get('twitter') %></li>
+                        <a href="<%= model.get('twitter') %>" title="twitter" target="_blank" class="contact-detail icon-twitter"><!-- --></a>
                     <% } %>
                     <% if(facebook) { %>
-                        <li>facebook: <%= model.get('facebook') %></li>
+                        <a href="<%= model.get('facebook') %>" title="facebook" target="_blank" class="contact-detail icon-facebook"><!-- --></a>
                     <% } %>
                     <% if(googlePlus) { %>
-                        <li>googlePlus: <%= model.get('googlePlus') %></li>
+                        <a href="<%= model.get('googlePlus') %>" title="googlePlus" target="_blank" class="contact-detail icon-google-plus"><!-- --></a>
                     <% } %>
-                </ul>
+                </div>
 
             </article>
         <% }) %>
