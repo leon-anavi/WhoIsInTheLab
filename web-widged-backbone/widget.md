@@ -1,7 +1,7 @@
 Hackafe Who is in the lab Backbone Based Widget
 ==================
 Dependencies:
-- Backbone
+- Backbone 1.0
 - Undescore
 - Template loader
 - jQuery 1.8+

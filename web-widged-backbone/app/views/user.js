@@ -9,6 +9,7 @@
         template: null,
         collection: null,
         events: {},
+        shown: false,
 
         initialize: function(options){
             var view = this;
@@ -20,18 +21,27 @@
 
             templateLoader.loadRemoteTemplate(templateName, templateUrl, function(data){
                 view.template = _.template(data);
+            });
+
+            App.router.on('users:updated', function() {
                 view.render();
             });
 
-            $('.call-dropdown').on('click', function(){
-                $('.hidden').toggleClass('show');
-                console.log('test');
+            App.router.on('users:hide', function() {
+                view.shown = false;
+                view.$el.fadeOut();
             });
+
+            App.router.trigger('users:update');
+
         },
 
         render: function(){
             var view = this;
-            this.$el.html(this.template.call(this));
+
+            view.shown = true;
+            view.$el.html(this.template.call(this)).fadeIn();
+
         },
 
         /**
