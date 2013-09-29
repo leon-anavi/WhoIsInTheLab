@@ -1,0 +1,63 @@
+<!doctype html>
+
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 lt-ie9" lang="en"> <![endif]-->
+<!--[if IE 9]>    <html class="no-js eq-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 9]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Prototype Boilerplate - BP5, LESS, BOOTSRAP - PLEEEESE rename this title</title>
+    <meta name="description" content="">
+
+    <meta name="viewport" content="width=device-width">
+
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <script src="js/libs/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+
+    <!-- <link rel="stylesheet/less" type="text/css" href="less/bootstrap.less"> -->
+    <!-- <script src="js/libs/less-1.3.3.min.js"></script> -->
+    <script type="text/javascript">
+        window.App = window.App || {};
+        App.Env = App.Env || {};
+        App.Env.baseUrl = window.location.origin + window.location.pathname;
+    </script>
+</head>
+<body>
+
+    <div class="wrapper" role="main" data-page="">
+        <a href="javascript:;" id="js-show-users" class="btn btn-default">who is in the lab</a>
+        <section id="placehoder-users">
+        </section>
+
+    </div><!-- end of .wrapper -->
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+        if (typeof jQuery == 'undefined') {
+            var e = document.createElement('script');
+            e.src = "js/libs/jquery-1.9.1.min.js";
+            e.type='text/javascript';
+            document.getElementsByTagName("head")[0].appendChild(e);
+        }
+    </script>
+
+    <!-- NOTE: Keep the order of scripts -->
+    <script src="js/libs/underscore-min.js"></script>
+    <script src="js/libs/backbone-min.js"></script>
+    <script src="js/plugins.js"></script>
+
+
+    <script src="js/app.js"></script>
+    <script src="js/libs/template_loader.js"></script>
+
+    <!-- Scripts that will be minified and merged-->
+    <script src="app/views/user.js"></script>
+    <script src="app/models/user.js"></script>
+    <!-- END of Scripts that will be minified and merged-->
+
+    <!-- end scripts -->
+</body>
+</html>
