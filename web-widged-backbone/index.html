@@ -23,14 +23,12 @@
         window.App = window.App || {};
         App.Env = App.Env || {};
         App.Env.baseUrl = window.location.origin + window.location.pathname;
-        console.log(['App.Env.baseUrl', App.Env.baseUrl]);
     </script>
 </head>
 <body>
 
     <div class="wrapper" role="main" data-page="">
-
-        <a href="#!/show-users" class="btn btn-default call-dropdown">who is in the lab</a>
+        <a href="javascript:;" id="js-show-users" class="btn btn-default">who is in the lab</a>
         <section id="placehoder-users">
             content
         </section>
