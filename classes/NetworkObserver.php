@@ -142,9 +142,9 @@ class NetworkObserver
 		{
 			$jsonUser = array('name1' => $user->name1, 
 					'name2' => $user->name2,
-					'twitter' => $user->twitterLink,
-					'facebook' => $user->facebookLink,
-					'googlePlus' => $user->googlePlusLink,
+					'twitter' => $user->twitter,
+					'facebook' => $user->facebook,
+					'googlePlus' => $user->googlePlus,
 					'tel' => $user->tel,
 					'email' => $user->email,
 					'website' => $user->website);
