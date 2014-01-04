@@ -15,3 +15,4 @@ CREATE TABLE IF NOT EXISTS `who_history` (
 
 --Update 3
 ALTER TABLE  `who_users` ADD  `user_fstoken` VARCHAR( 255 ) NOT NULL;
+ALTER TABLE  `who_users` ADD  `user_fscheckin` TIMESTAMP NOT NULL DEFAULT 0;

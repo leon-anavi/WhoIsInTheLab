@@ -43,11 +43,14 @@ class NetworkScanner
 		$devices = $this->parse($sNetInfo);
 		$this->m_dbCtrl->saveOnlineDevices($devices);
 		//checkin FourSquare users
-		$tokens = $this->m_dbCtrl->getFourSquareTokens();
-		foreach($tokens as $token)
+		$tokens = $this->m_dbCtrl->getFourSquareTokens(
+										$this->m_fourSquareCtrl->getRefreshRate() );
+		foreach($tokens as $nUserId => $sToken)
 		{
-			$this->m_fourSquareCtrl->checkIn($token);
+			$this->m_fourSquareCtrl->checkIn($sToken);
 		}
+		//update users last checkin timestamp
+		$this->m_dbCtrl->updateFourSquareLastCheckin($tokens);
 	}
 	//------------------------------------------------------------------------------
 	

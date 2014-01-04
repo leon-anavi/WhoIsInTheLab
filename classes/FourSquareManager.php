@@ -15,6 +15,8 @@ class FourSquareManager extends FoursquareApi
 {
 	private $m_sVenueId; 
 	
+	private $m_nRefreshRate;
+	
 	/** 
 	 * Constructor
 	 * 
@@ -26,6 +28,8 @@ class FourSquareManager extends FoursquareApi
 		$config = $cfgFile['FOURSQUARE'];
 		
 		$this->m_sVenueId = (isset($config['venue'])) ? $config['venue'] : false;
+		$this->m_nRefreshRate = (isset($config['checkinPeriod'])) ? 
+												$config['checkinPeriod'] : 24;
 		
 		$sClientId = (isset($config['key'])) ? $config['key'] : false;
 		$sClientSecret = (isset($config['secret'])) ? $config['secret'] : false;
@@ -36,6 +40,18 @@ class FourSquareManager extends FoursquareApi
 	}
 	//------------------------------------------------------------------------------
 	
+	/**
+	 * Get the refresh rate in hours
+	 * 
+	 * @return int refresh rate in hours
+	 * @throws nothing
+	 */
+	public function getRefreshRate()
+	{
+			return $this->m_nRefreshRate;
+	}
+	//------------------------------------------------------------------------------
+		
 	/**
 	 * Check into the configured venue
 	 * 

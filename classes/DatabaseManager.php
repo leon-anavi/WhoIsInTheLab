@@ -130,20 +130,56 @@ class DatabaseManager
 	//------------------------------------------------------------------------------
 	
 	/**
+	 * update the last checkin date
+	 * 
+	 * @param $users array with keys that must match the ids of the users
+	 * 
+	 * @return nothing
+	 * @throws nothing
+	 */
+	public function updateFourSquareLastCheckin($users)
+	{
+		if (0 == count($users))
+		{
+			//no need to update anything
+			return;
+		}
+		$sSQL = "UPDATE ".self::$DB_USERS." SET user_fscheckin = NOW() WHERE ";
+		$bIsFirst = true;
+		foreach($users as $nUserId => $sToken)
+		{
+			if (true == $bIsFirst)
+			{
+				$bIsFirst = false;
+			}
+			else
+			{
+				$sSQL .= " OR ";
+			}
+			$sSQL .= "user_id={$nUserId}";
+		}
+		$res = $this->m_db->query($sSQL);	
+	}
+	//------------------------------------------------------------------------------
+	
+	/**
 	 * Get acess token of Foursquare users
+	 * 
+	 * @param $nMinPeriod minimal perion in hours between checkins
 	 * 
 	 * @return array
 	 * @throws nothing
 	 */
-	public function getFourSquareTokens()
+	public function getFourSquareTokens($nMinPeriod = 24)
 	{
 		$tokens = array();
-		$sSQL = "SELECT user_fstoken ";
+		$sSQL = "SELECT user_id, user_fstoken ";
 		$sSQL .= "FROM ".self::$DB_ONLINE;
 		$sSQL .= " LEFT JOIN ".self::$DB_DEVICES." ON online_MAC = device_MAC ";
 		$sSQL .= "LEFT JOIN ".self::$DB_USERS." ON device_uid = user_id ";
 		$sSQL .= "WHERE online_MAC NOT IN (SELECT blacklist_MAC FROM ".self::$DB_BLACKLIST.") ";
 		$sSQL .= "AND user_fstoken <> '' ";
+		$sSQL .= "AND (UNIX_TIMESTAMP(user_fscheckin) + $nMinPeriod *3600) < UNIX_TIMESTAMP() ";
 		$sSQL .= "GROUP BY user_fstoken ";
 		$res = $this->m_db->query($sSQL);
 		if (false === $res)
@@ -153,7 +189,7 @@ class DatabaseManager
 		
 		while ($row = $res->fetch_assoc())
 		{
-			$tokens[] = $row['user_fstoken'];
+			$tokens[$row['user_id']] = $row['user_fstoken'];
 		}
 		return $tokens;
 	}
