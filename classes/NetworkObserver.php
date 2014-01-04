@@ -45,7 +45,7 @@ class NetworkObserver
 	 *
 	 * @return nothing
 	 */
-	public function listOnlineUsers($sType, $callback=false)
+	public function listOnlineUsers($sType, $bCallback = false)
 	{
 		//make sure that the argument will be process correctly
 		$sType = strtoupper($sType);
@@ -57,17 +57,17 @@ class NetworkObserver
 		switch($sType)
 		{
 			case 'JSON':
-			    $contentType = 'application/json';
+			    $sContentType = 'application/json';
 				$response = $this->listJSON();
 			break;
 			
 			case 'HTML':
-			    $contentType = 'text/html';
+			    $sContentType = 'text/html';
 				$response = $this->listHTML();
 			break;
 			
 			case 'XML':
-			    $contentType = 'application/xml';
+			    $sContentType = 'application/xml';
 				$response = $this->listXML();
 			break;
 			
@@ -78,22 +78,32 @@ class NetworkObserver
 			case 'TXT':
 			default:
 				//plain text
-			    $contentType = 'text/plain';
+			    $sContentType = 'text/plain';
 				$response = $this->listPlainText();
 			break;
 		}
 		
-		if ($callback) {
-		    if ($sType != 'JSON')
-		        $data = array(strtolower($sType) => $response);
-		    else
-		        $data = json_decode($response);
+		if (true == $bCallback) 
+		{
+			if ('JSON' != $sType)
+			{
+				$data = array(strtolower($sType) => $response);
+			}
+			else
+			{
+				$data = json_decode($response);
+			}
 		    
 		    header('Content-Type', 'text/javascript');
-		    echo $callback . '(' . json_encode($data, JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT) . ')';
-		} else {
-		    header('Content-Type', $contentType);
-		    echo $response;
+		    echo $callback . '(';
+		    echo json_encode($data, JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT);
+		    echo ')';
+		}
+		else 
+		{
+			//just output the response
+			header('Content-Type', $sContentType);
+			echo $response;
 		}
 	}
 	//------------------------------------------------------------------------------
