@@ -48,7 +48,69 @@ class FourSquareManager extends FoursquareApi
 	{
 		$this->SetAccessToken($sAcessToken);
 		$params = array('venueId'=>$this->m_sVenueId);
-        $this->GetPrivate("checkins/add",$params,true);
+		$this->GetPrivate("checkins/add",$params,true);
+	}
+	//------------------------------------------------------------------------------
+	
+	/**
+	 * Get access token 
+	 * 
+	 * @param sCode code
+	 * 
+	 * @return string access token
+	 * @throws nothing
+	 */
+	public function getAccessToken($sCode)
+	{
+		return $this->GetToken($sCode, $this->RedirectUri);
+	}
+	//------------------------------------------------------------------------------
+	
+	/**
+	 * Get authentication link with the configured redirect URL
+	 * 
+	 * @return string the authentication link
+	 * @throws nothing
+	 */
+	public function getAuthenticationLink()
+	{
+		return $this->AuthenticationLink($this->RedirectUri);
+	}
+	//------------------------------------------------------------------------------
+	
+	/**
+	 * Get full name of the user
+	 * 
+	 * @param $sAcessToken access token of the user
+	 * 
+	 * @return string name
+	 * @throws nothing
+	 */
+	public function getName($sAccessToken)
+	{
+		//get user name
+		$this->SetAccessToken($sAccessToken);
+		//show current user
+		$response = $this->GetPrivate("users/self");
+		$res = json_decode($response);
+		$sUserFullname = '';
+		if (true == isset($res->response->user))
+		{
+			if (true == property_exists($res->response->user, "firstName")) 
+			{
+				$sUserFullname = $res->response->user->firstName;
+			}
+			
+			if (true == property_exists($res->response->user, "lastName")) 
+			{
+				if (false == empty($sUserFullname ))
+				{
+					$sUserFullname .= ' ';
+				}
+				$sUserFullname .= $res->response->user->lastName;
+			}
+		}
+		return $sUserFullname;
 	}
 	//------------------------------------------------------------------------------
 }
