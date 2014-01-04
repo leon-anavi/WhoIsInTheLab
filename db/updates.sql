@@ -13,3 +13,5 @@ CREATE TABLE IF NOT EXISTS `who_history` (
   PRIMARY KEY (`history_id`)
 );
 
+--Update 3
+ALTER TABLE  `who_users` ADD  `user_fstoken` VARCHAR( 255 ) NOT NULL;
