@@ -39,15 +39,25 @@ class DatabaseManager
 	}
 	//------------------------------------------------------------------------------
 	
+	/**
+	 * Save online device to database
+	 * 
+	 * @param $devices array with online devices
+	 * 
+	 * @return nothing
+	 * @throws Exception on error
+	 */
 	public function saveOnlineDevices($devices)
 	{
 	    $sTable = self::$DB_ONLINE;
 	
-	    $sSQL = <<<ESQL
-	        SELECT online_id, online_MAC, online_since
-	        FROM $sTable
-ESQL;
+	    $sSQL = "SELECT online_id, online_MAC, online_since FROM $sTable";
+	        
 	    $res = $this->m_db->query($sSQL);
+	    if (false == $res)
+	    {
+			throw new Exception("Error: {$this->m_db->error}\n");
+		}
 	    
 	    $existingDevices = array();
 	    while ($row = $res->fetch_assoc())
@@ -96,15 +106,20 @@ ESQL;
 		    $this->m_db->query($sSQL);
 		}
 
-
         // Delete the devices who are no longer online
-        if (count($oldDevices)) {
-		    $sSQL = "INSERT INTO " . self::$DB_HISTORY . " ( history_MAC, history_from ) VALUES ";
+        if (count($oldDevices)) 
+        {
+		    $sSQL = "INSERT INTO " . self::$DB_HISTORY;
+		    $sSQL .= " ( history_MAC, history_from ) VALUES ";
 		    $bIsFirst = true;
-		    foreach ($oldDevices as $sMAC => $def) {
-		        if ($bIsFirst) { 
+		    foreach ($oldDevices as $sMAC => $def) 
+		    {
+		        if ($bIsFirst) 
+		        { 
 		            $bIsFirst = false;
-		        } else {
+		        } 
+		        else 
+		        {
 		            $sSQL .= ', ';
 		        }
 			    $sSQL .= "('".addslashes($sMAC)."', '".addslashes($def['since'])."')";

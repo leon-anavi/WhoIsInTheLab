@@ -15,6 +15,13 @@ error_reporting(-1);
 
 require_once __DIR__."/../classes/NetworkScanner.php";
 
-$netScanner = new NetworkScanner();
-$netScanner->run();
+try 
+{
+	$netScanner = new NetworkScanner();
+	$netScanner->run();
+}
+catch(Exception $ex)
+{
+	echo $ex->getMessage() ."\n";
+}
 ?>

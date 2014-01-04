@@ -31,6 +31,7 @@ class NetworkScanner
 	 * Scan the network and retrieve devices
 	 *
 	 * @return nothing
+	 * @throws Exception on error
 	 */
 	public function run()
 	{
