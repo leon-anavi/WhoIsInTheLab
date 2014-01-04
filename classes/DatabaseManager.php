@@ -129,6 +129,36 @@ class DatabaseManager
 	}
 	//------------------------------------------------------------------------------
 	
+	/**
+	 * Get acess token of Foursquare users
+	 * 
+	 * @return array
+	 * @throws nothing
+	 */
+	public function getFourSquareTokens()
+	{
+		$tokens = array();
+		$sSQL = "SELECT user_fstoken ";
+		$sSQL .= "FROM ".self::$DB_ONLINE;
+		$sSQL .= " LEFT JOIN ".self::$DB_DEVICES." ON online_MAC = device_MAC ";
+		$sSQL .= "LEFT JOIN ".self::$DB_USERS." ON device_uid = user_id ";
+		$sSQL .= "WHERE online_MAC NOT IN (SELECT blacklist_MAC FROM ".self::$DB_BLACKLIST.") ";
+		$sSQL .= "AND user_fstoken <> '' ";
+		$sSQL .= "GROUP BY user_fstoken ";
+		$res = $this->m_db->query($sSQL);
+		if (false === $res)
+		{
+			return $tokens;
+		}
+		
+		while ($row = $res->fetch_assoc())
+		{
+			$tokens[] = $row['user_fstoken'];
+		}
+		return $tokens;
+	}
+	//------------------------------------------------------------------------------
+		
 	public function listOnlineDevices()
 	{
 		$sSQL = "SELECT ";

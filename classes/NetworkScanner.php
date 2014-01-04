@@ -10,14 +10,18 @@
 */
 
 require_once "DatabaseManager.php";
+require_once "FourSquareManager.php";
 
 class NetworkScanner
 {
 	private $m_dbCtrl;
+	
+	private $m_fourSquareCtrl;
 
 	function __construct()
 	{
 		$this->m_dbCtrl = new DatabaseManager();
+		$this->m_fourSquareCtrl = new FourSquareManager();
 	}
 	//------------------------------------------------------------------------------
 	
@@ -38,6 +42,12 @@ class NetworkScanner
 		$sNetInfo = $this->scanNetwork();
 		$devices = $this->parse($sNetInfo);
 		$this->m_dbCtrl->saveOnlineDevices($devices);
+		//checkin FourSquare users
+		$tokens = $this->m_dbCtrl->getFourSquareTokens();
+		foreach($tokens as $token)
+		{
+			$this->m_fourSquareCtrl->checkIn($token);
+		}
 	}
 	//------------------------------------------------------------------------------
 	

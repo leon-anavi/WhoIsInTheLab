@@ -48,7 +48,7 @@ class FourSquareManager extends FoursquareApi
 	{
 		$this->SetAccessToken($sAcessToken);
 		$params = array('venueId'=>$this->m_sVenueId);
-        $foursquare->GetPrivate("checkins/add",$params,true);
+        $this->GetPrivate("checkins/add",$params,true);
 	}
 	//------------------------------------------------------------------------------
 }
