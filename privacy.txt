@@ -1,0 +1,1 @@
+WhoIsInTheLab is using the Foursquare API to automatically check-in users attached to the WiFi network. The personal data of the users who provided access to their Foursquare accounts to not reveals to any 3rd parties.
