@@ -25,7 +25,7 @@ class FourSquareManager extends FoursquareApi
 									$sApiVersion='20140104')
 	{
 		$cfgFile = parse_ini_file("/aux0/WhoIsInTheLab/db.cfg", true);
-		$config = $cfgFile['FOURSQUARE'];
+		$config = (isset($cfgFile['FOURSQUARE'])) ? $cfgFile['FOURSQUARE'] : array();
 		
 		$this->m_sVenueId = (isset($config['venue'])) ? $config['venue'] : false;
 		$this->m_nRefreshRate = (isset($config['checkinPeriod'])) ? 
