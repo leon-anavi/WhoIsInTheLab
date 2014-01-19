@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 * ============================================================================
 *  Name         : DatabaseManager.php
@@ -19,10 +19,18 @@ class DatabaseManager
 	private static $DB_USERS = 'who_users';
 	private static $DB_HISTORY = 'who_history';
 
+	private	static	$USER_ONLINE_TIME		= 20;	//	minutes
+	
 	function __construct()
 	{
-		$cfgFile = parse_ini_file("/aux0/WhoIsInTheLab/db.cfg", true);
+		$cfgFile = parse_ini_file("../config/db.cfg", true);
 		$config = $cfgFile['MYSQL'];
+
+		//	Get the number of minutes to consider a user to be online.
+		//	If we detect a user to be online now, we will consider him
+		//	online for this amount of minutes.
+		if( isset($config['userOnlineTime']) )
+			self::$USER_ONLINE_TIME	= $config['userOnlineTime'];
 
 		$this->m_db = new mysqli($config['host'], $config['username'], 
 					 $config['password'], $config['database']);
@@ -90,42 +98,24 @@ class DatabaseManager
 		    $this->m_db->query($sSQL);
 		}
 
-        // Delete the devices who are no longer online
-        if (count($oldDevices)) {
-		    $sSQL = "DELETE FROM $sTable WHERE online_id in (";
-		    $bIsFirst = true;
-		    foreach ($oldDevices as $def) {
-		        if ($bIsFirst) { 
-		            $bIsFirst = false;
-		        } else {
-		            $sSQL .= ', ';
-		        }
-		        $sSQL .= "'" . addslashes($def['id']) . "'";
-		    }
-		    $sSQL .= ");";
-		    $this->m_db->query($sSQL);
-		}
+		//	If we detect a user to be online now, we will consider him
+		//	online for this amount of minutes - self::$USER_ONLINE_TIME.
+		$sOldest	= time() - (self::$USER_ONLINE_TIME * 60);
+		
+		//	When we detect a time has elapsed for a user,
+		//	we move its record to the history table.
 
-        // Delete the devices who are no longer online
-        if (count($oldDevices)) 
-        {
-		    $sSQL = "INSERT INTO " . self::$DB_HISTORY;
-		    $sSQL .= " ( history_MAC, history_from ) VALUES ";
-		    $bIsFirst = true;
-		    foreach ($oldDevices as $sMAC => $def) 
-		    {
-		        if ($bIsFirst) 
-		        { 
-		            $bIsFirst = false;
-		        } 
-		        else 
-		        {
-		            $sSQL .= ', ';
-		        }
-			    $sSQL .= "('".addslashes($sMAC)."', '".addslashes($def['since'])."')";
-		    }
-		    $this->m_db->query($sSQL);
-		}
+		//	Copy the old devices to the history table
+		$sSQL	= "INSERT INTO " . self::$DB_HISTORY . "( history_MAC, history_from )";
+		$sSQL	.= " SELECT online_MAC, online_since FROM " . self::$DB_ONLINE;
+		$sSQL	.= " WHERE online_since < FROM_UNIXTIME(" . $sOldest . ")";
+		$this->m_db->query($sSQL);
+
+		//	Remove the old devices from the online table
+		$sSQL	= "DELETE FROM " . self::$DB_ONLINE;
+		$sSQL	.= " WHERE online_since < FROM_UNIXTIME(" . $sOldest . ")";
+		$this->m_db->query($sSQL);
+
 	}
 	//------------------------------------------------------------------------------
 	
