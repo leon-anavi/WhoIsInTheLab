@@ -46,7 +46,8 @@ class DatabaseManager
 		//Nothing to do
 	}
 	//------------------------------------------------------------------------------
-	
+
+
 	/**
 	 * Save online device to database
 	 * 
@@ -57,12 +58,56 @@ class DatabaseManager
 	 */
 	public function saveOnlineDevices($devices)
 	{
-	    $sTable = self::$DB_ONLINE;
+		//	Do these steps
+		//	1. Insert new devices in the Database
+		//	2. Update old devices that are in $devices
+		//	3. Delete devices that expired
+
+		
+		
+		//	1. Insert new devices in the Database
+		//	2. Update old devices that are in $devices
+		$this->insertUpdateDevices( $devices );
+
+
+		
+
+		//	If we detect a user to be online now, we will consider him
+		//	online for this amount of minutes - self::$USER_ONLINE_TIME.
+		$sOldest	= time() - (self::$USER_ONLINE_TIME * 60);
+		
+		//	When we detect a time has elapsed for a user,
+		//	we move its record to the history table.
+
+		//	Copy the old devices to the history table
+		$sSQL	= "INSERT INTO " . self::$DB_HISTORY . "(history_MAC, history_from)";
+		$sSQL	.= " SELECT online_MAC, online_since FROM " . self::$DB_ONLINE;
+		$sSQL	.= " WHERE online_last<FROM_UNIXTIME(" . $sOldest . ")";
+		$this->m_db->query($sSQL);
+
+		//	Remove the old devices from the online table
+		$sSQL	= "DELETE FROM " . self::$DB_ONLINE;
+		$sSQL	.= " WHERE online_last<FROM_UNIXTIME(" . $sOldest . ")";
+		$this->m_db->query($sSQL);
+	}
+	//------------------------------------------------------------------------------
 	
-	    $sSQL = "SELECT online_id, online_MAC, online_since FROM $sTable";
+
+	/**
+	 * Save online device to database.
+	 * Update devices that are already in the database.
+	 * 
+	 * @param $devices array with online devices
+	 * 
+	 * @return nothing
+	 * @throws Exception on error
+	 */
+	private	function	insertUpdateDevices( $devices )
+	{
+	    $sSQL = "SELECT online_id, online_MAC, online_since FROM " . self::$DB_ONLINE;
 	        
 	    $res = $this->m_db->query($sSQL);
-	    if (false == $res)
+	    if( false == $res )
 	    {
 			throw new Exception("Error: {$this->m_db->error}\n");
 		}
@@ -75,49 +120,54 @@ class DatabaseManager
 			    'since' => $row['online_since']);
 		}
 		
-		$oldDevices = array_diff_key($existingDevices, $devices);
-		$newDevices = array_diff_key($devices, $existingDevices);
 
-        // Insert the new devices we found
-        if (count($newDevices)) {
-		    $sSQL = "INSERT INTO $sTable ( ";
-		    $sSQL .= "online_MAC, online_IP) VALUES ";
+        //	Insert the new devices we found
+		$newDevices = array_diff_key( $devices, $existingDevices );		//	New devices (not in DB)
+        if( count($newDevices) )
+		{
+		    $sSQL = "INSERT INTO " . self::$DB_ONLINE . "(online_MAC, online_IP) VALUES";
 		    $bIsFirst = true;
-		    foreach ($newDevices as $sMAC => $sIP)
+		    foreach( $newDevices as $sMAC => $sIP )
 		    {
-			    if (false == $bIsFirst)
+			    if( false == $bIsFirst )
 			    {
-				    $sSQL .= ", ";
+				    $sSQL .= ",";
 			    }
 			    else
 			    {
 				    $bIsFirst = false;
 			    }
-			    $sSQL .= "('".addslashes($sMAC)."',  '".addslashes($sIP)."')";
+			    $sSQL .= "('".addslashes($sMAC)."','".addslashes($sIP)."')";
 		    }
 		    $this->m_db->query($sSQL);
 		}
 
-		//	If we detect a user to be online now, we will consider him
-		//	online for this amount of minutes - self::$USER_ONLINE_TIME.
-		$sOldest	= time() - (self::$USER_ONLINE_TIME * 60);
-		
-		//	When we detect a time has elapsed for a user,
-		//	we move its record to the history table.
-
-		//	Copy the old devices to the history table
-		$sSQL	= "INSERT INTO " . self::$DB_HISTORY . "( history_MAC, history_from )";
-		$sSQL	.= " SELECT online_MAC, online_since FROM " . self::$DB_ONLINE;
-		$sSQL	.= " WHERE online_since < FROM_UNIXTIME(" . $sOldest . ")";
-		$this->m_db->query($sSQL);
-
-		//	Remove the old devices from the online table
-		$sSQL	= "DELETE FROM " . self::$DB_ONLINE;
-		$sSQL	.= " WHERE online_since < FROM_UNIXTIME(" . $sOldest . ")";
-		$this->m_db->query($sSQL);
-
+        //	Update existing devices
+		$oldDevices = array_intersect_key( $existingDevices, $devices );	//	Devices already in the DB
+		$timeNow	= time();
+        if( count($oldDevices) )
+		{
+		    $sSQL = "UPDATE " . self::$DB_ONLINE;
+		    $sSQL .= " SET online_last=FROM_UNIXTIME(" . $timeNow . ") WHERE ";
+		    $bIsFirst = true;
+		    foreach( $oldDevices as $sMAC => $row )
+		    {
+				$id	= $row["id"];
+			    if( false == $bIsFirst )
+			    {
+				    $sSQL .= " OR ";
+			    }
+			    else
+			    {
+				    $bIsFirst = false;
+			    }
+			    $sSQL .= "online_id=".addslashes($id);
+		    }
+		    $res	= $this->m_db->query($sSQL);
+		}
 	}
 	//------------------------------------------------------------------------------
+	
 	
 	/**
 	 * update the last checkin date
