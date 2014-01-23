@@ -38,12 +38,15 @@ CREATE TABLE IF NOT EXISTS `who_devices` (
 --
 
 CREATE TABLE IF NOT EXISTS `who_online` (
-  `online_id` int(6) NOT NULL auto_increment,
-  `online_MAC` varchar(17) collate cp1251_bulgarian_ci NOT NULL,
-  `online_IP` varchar(30) collate cp1251_bulgarian_ci NOT NULL,
-  PRIMARY KEY  (`online_id`),
-  UNIQUE KEY `online_MAC` (`online_MAC`,`online_IP`)
-) ENGINE=InnoDB DEFAULT CHARSET=cp1251 COLLATE=cp1251_bulgarian_ci AUTO_INCREMENT=1 ;
+  `online_id` int(6) NOT NULL AUTO_INCREMENT,
+  `online_MAC` varchar(17) COLLATE cp1251_bulgarian_ci NOT NULL,
+  `online_IP` varchar(30) COLLATE cp1251_bulgarian_ci NOT NULL,
+  `online_since` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'First time seen online',
+  `online_last` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Last time seen online',
+  PRIMARY KEY (`online_id`),
+  UNIQUE KEY `online_MAC` (`online_MAC`,`online_IP`),
+  KEY `online_last` (`online_last`)
+) ENGINE=InnoDB  DEFAULT CHARSET=cp1251 COLLATE=cp1251_bulgarian_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
