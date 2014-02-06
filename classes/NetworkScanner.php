@@ -72,7 +72,7 @@ class NetworkScanner
 	 */
 	private function scanNetwork()
 	{
-		$sCmd = "sudo arp-scan --interface=eth0 -l | egrep ";
+		$sCmd = "sudo arp-scan -l | egrep ";
 		$sCmd .= "'[[:digit:]]{1,3}\.[[:digit:]]{1,3}\.[[:digit:]]{1,3}\.[[:digit:]]{1,3}'";
 		return shell_exec($sCmd);
 	}

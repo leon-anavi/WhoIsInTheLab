@@ -23,7 +23,7 @@ class DatabaseManager
 	
 	function __construct()
 	{
-		$cfgFile = parse_ini_file("../config/db.cfg", true);
+		$cfgFile = parse_ini_file("/aux0/WhoIsInTheLab/db.cfg", true);
 		$config = $cfgFile['MYSQL'];
 
 		//	Get the number of minutes to consider a user to be online.
@@ -125,7 +125,7 @@ class DatabaseManager
 		$newDevices = array_diff_key( $devices, $existingDevices );		//	New devices (not in DB)
         if( count($newDevices) )
 		{
-		    $sSQL = "INSERT INTO " . self::$DB_ONLINE . "(online_MAC, online_IP) VALUES";
+		    $sSQL = "INSERT INTO " . self::$DB_ONLINE . "(online_MAC, online_IP, online_since, online_last) VALUES";
 		    $bIsFirst = true;
 		    foreach( $newDevices as $sMAC => $sIP )
 		    {
@@ -137,7 +137,7 @@ class DatabaseManager
 			    {
 				    $bIsFirst = false;
 			    }
-			    $sSQL .= "('".addslashes($sMAC)."','".addslashes($sIP)."')";
+			    $sSQL .= "('".addslashes($sMAC)."','".addslashes($sIP)."', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP() )";
 		    }
 		    $this->m_db->query($sSQL);
 		}
