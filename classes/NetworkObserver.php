@@ -95,9 +95,17 @@ class NetworkObserver
 			}
 		    
 		    header('Content-Type', 'text/javascript');
-		    echo $callback . '(';
+			if($bCallback) 
+			{
+				echo $_REQUEST['callback'] . '(';
+			}
+
 		    echo json_encode($data, JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT);
-		    echo ')';
+
+			if($bCallback) 
+			{
+				echo ')';
+			}
 		}
 		else 
 		{
