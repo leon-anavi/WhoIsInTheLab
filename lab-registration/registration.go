@@ -2,41 +2,39 @@ package main
 
 import (
 	"net/http"
-	"fmt"
 	"strings"
 	"os/exec"
 	"io/ioutil"
 	"log"
 )
 
-func check_error(err error) {
+func checkError(err error) {
 	if err != nil {
-		fmt.Println(err)
 		log.Fatal(err)
 	}
 }
 
-func exec_arp_search(arp_file string, ipAddr string) string {
-	arp_list := exec.Command("cat", arp_file)
-	out, err := arp_list.Output()
-	check_error(err)
+func getArpEntry(arpFile string, ip string) string {
+	out, err := exec.Command("cat", arpFile).Output()
+	checkError(err)
 
-	ioutil.WriteFile("/tmp/arp_list", out, 0644)
+	ioutil.WriteFile("/tmp/arp-table", out, 0644)
 
-	out_grep, err := exec.Command("grep", "-w" , ipAddr, "/tmp/arp_list").Output()
-	check_error(err)
+	grepOut, err := exec.Command("grep", "-w" , ip, "/tmp/arp-table").Output()
+	checkError(err)
 
-	return string(out_grep[:])
+	return string(grepOut[:])
 
 }
 
-func GetMacAddress(arp_file string, ipaddr string) string {
-	arp_info := exec_arp_search(arp_file, ipaddr)
-	fields := strings.Fields(arp_info)
+func GetMacAddress(arpFile string, ip string) string {
+	entry := getArpEntry(arpFile, ip)
+	fields := strings.Fields(entry)
+	// This is the mac address field
 	return fields[3]
 }
 
 func Hello(res http.ResponseWriter, req *http.Request) string {
-	ipaddr := strings.Split(req.RemoteAddr, ":")[0]
-	return GetMacAddress("/proc/net/arp", ipaddr)
+	ip := strings.Split(req.RemoteAddr, ":")[0]
+	return GetMacAddress("/proc/net/arp", ip)
 }

@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/go-martini/martini"
 	"net/http"
 	"log"
+
+	"github.com/go-martini/martini"
 )
 
 func main() {
