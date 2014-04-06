@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"strings"
 	"os/exec"
-	"io/ioutil"
 	"log"
 )
 
@@ -15,16 +14,10 @@ func checkError(err error) {
 }
 
 func getArpEntry(arpFile string, ip string) string {
-	out, err := exec.Command("cat", arpFile).Output()
-	checkError(err)
-
-	ioutil.WriteFile("/tmp/arp-table", out, 0644)
-
-	grepOut, err := exec.Command("grep", "-w" , ip, "/tmp/arp-table").Output()
+	grepOut, err := exec.Command("grep", "-w" , ip, arpFile).Output()
 	checkError(err)
 
 	return string(grepOut[:])
-
 }
 
 func GetMacAddress(arpFile string, ip string) string {
