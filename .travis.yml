@@ -1,0 +1,5 @@
+language: go
+script: go get github.com/go-martini/martini && 
+        go test
+notifications:
+          email: false
