@@ -3,7 +3,6 @@ language: go
 go:
         1.2.1
 
-script: go get github.com/go-martini/martini && 
-        go test
+script:  go test
 notifications:
           email: false
