@@ -5,10 +5,12 @@ import (
 	"log"
 
 	"github.com/go-martini/martini"
+	"github.com/martini-contrib/render"
 )
 
 func main() {
 	m := martini.Classic()
-	m.Get("/", Hello);
+	m.Use(render.Renderer())
+	m.Get("/register", RegForm);
 	log.Fatal(http.ListenAndServe(":8080", m))
 }
