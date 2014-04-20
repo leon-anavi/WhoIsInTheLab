@@ -5,9 +5,12 @@ import (
 	"strings"
 
 	"github.com/martini-contrib/render"
+
 )
 
-func RegForm(res http.ResponseWriter, req *http.Request, r render.Render) {
+
+func RegForm(res http.ResponseWriter, req *http.Request, r render.Render, dataStore DataStore) {
+
 	ip := strings.Split(req.RemoteAddr, ":")[0]
 	mac, err := GetMacAddress("/proc/net/arp", ip)
 	if err != nil {
