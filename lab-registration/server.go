@@ -6,10 +6,21 @@ import (
 
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
+	"flag"
 )
 
+var configFile string
+
+const defaultConfig = "./config/db.cfg"
+
+func init() {
+	flag.StringVar(&configFile, "config", defaultConfig, "Database config file")
+}
+
+
 func main() {
-	conf := ReadConfig("./config/db.cfg")
+	flag.Parse()
+	conf := ReadConfig(configFile)
 
 	m := martini.Classic()
 	m.Use(render.Renderer())
