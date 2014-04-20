@@ -1,5 +1,6 @@
 package main
 
 type DataStore interface {
-	GetAllUsers() ([]User, error)
+	GetAllUsers() ([]SimpleUser, error)
+	GetUser(id int) (User, error)
 }

@@ -36,6 +36,7 @@ func main() {
 
 	r := martini.NewRouter()
 	r.Get("/mac", GetMac)
+	r.Get("/users/:id", GetUser)
 	r.Get("/users", GetUsers)
 	m.Action(r.Handle)
 

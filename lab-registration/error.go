@@ -7,7 +7,8 @@ import (
 const (
 	// Error codes
 	ErrMacNotFound     = 1
-	ErrInternal = 666
+	ErrUserNotFound    = 2
+	ErrInternal	   = 666
 )
 
 // The serializable Error structure.
