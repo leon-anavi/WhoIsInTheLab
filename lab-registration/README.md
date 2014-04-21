@@ -17,6 +17,7 @@ go get ./...
 go build 
 ```
 to build the binary 
+
 4. You need to setup mysql with the database from [whoIsInTheLab](https://github.com/leon-anavi/WhoIsInTheLab). The sql scripts are in the db/ directory.
 5. Modify **config/db.cfg** according to your database setup.
 6. Run the server with **./lab-registrarion**. You can optionaly specify a different config file location with **./lab-registration -config {path-to-config}**
