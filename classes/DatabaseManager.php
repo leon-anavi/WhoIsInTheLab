@@ -250,9 +250,12 @@ class DatabaseManager
 		$sSQL .= "ORDER BY user_name1 ASC ";
 		$res = $this->m_db->query($sSQL);
 		$devices = array();
-		while ($row = $res->fetch_assoc())
+		if (false !== $res)
 		{
-			$devices[] = $row;
+			while ($row = $res->fetch_assoc())
+			{
+				$devices[] = $row;
+			}
 		}
 		return $devices;
 	}
