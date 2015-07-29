@@ -22,7 +22,7 @@ func CreateMySqlDatastore(user, pass, host, dbName string) (DataStore) {
 }
 
 func CreateMysqlDataStoreFromConfig(config Config) (DataStore) {
-	return CreateMySqlDatastore(config.Username, config.Password, config.Host, config.Database)
+	return CreateMySqlDatastore(os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_HOST"), os.Getenv("DB_NAME"))
 }
 
 

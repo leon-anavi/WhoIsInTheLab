@@ -10,7 +10,7 @@ Hackafe device registration form for WhoIsInTheLab written in GO
 2. After cloning cd to project root dir and run **go get ./...**
 3. Run **go build** to build the binary 
 4. You need to setup mysql with the database from [whoIsInTheLab](https://github.com/leon-anavi/WhoIsInTheLab). The sql scripts are in the db/ directory.
-5. Modify **config/db.cfg** according to your database setup.
+5. Expose the following variable to your env to setup DB connection: DB_HOST, DB_NAME, DB_USERNAME, DB_PASSWORD
 6. Run the server with **./lab-registrarion**. You can optionaly specify a different config file location with **./lab-registration -config {path-to-config}**
 7. Test the server with  [http://localhost:8080/users](http://localhost:8080/users).
 8. If you try to open [http://localhost:8080/mac](http://localhost:8080/mac) you will get an error :).
