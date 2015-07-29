@@ -32,8 +32,8 @@ class DatabaseManager
 		if( isset($config['userOnlineTime']) )
 			self::$USER_ONLINE_TIME	= $config['userOnlineTime'];
 
-		$this->m_db = new mysqli($config['host'], $config['username'], 
-					 $config['password'], $config['database']);
+		$this->m_db = new mysqli(getenv('DB_HOST'), getenv('DB_USERNAME'),
+            getenv('DB_PASSWORD'), getenv('DB_NAME'));
 		if ($this->m_db->connect_error) 
 		{
 			die('Connect Error: ' . $this->m_db->connect_error);
