@@ -261,11 +261,5 @@ class DatabaseManager
 	}
 	//------------------------------------------------------------------------------
 	
-	private function removeAllOnlineDevices()
-	{
-		$sSQL = 'TRUNCATE TABLE '.self::$DB_ONLINE;
-		$this->m_db->query($sSQL);
-	}
-	//------------------------------------------------------------------------------
 }
 ?>
